@@ -14,6 +14,43 @@ class Apicontroller extends Controller
             CASE WHEN amount < 2000  THEN true ELSE false END AS flagMore")->get();
     }
 
+    public function betUser(){
+        $probabilidad = mt_rand(1, 100);
+        if($probabilidad <= 49){
+            return 3;
+        }
+        if($probabilidad > 49 && $probabilidad <= 98 ){
+            return 2;
+        }
+        if($probabilidad > 98){
+            return 1;
+        }
+        return $probabilidad;
+    }
+
+    public function amountBet($amount)
+    {
+        if($amount < 2000){
+            return $amount;
+        }
+        return ($amount * (mt_rand(10, 15) / 100));
+    }
+    
+    public function getUsersAutomatic()
+    {
+        $data = User::selectRaw("id, name, lastName, amount, email, telephone, 
+            CASE WHEN amount < 2000  THEN amount ELSE (amount * 0.1) END AS betAvailable, true AS flagLess, 
+            CASE WHEN amount < 2000  THEN true ELSE false END AS flagMore")->get();
+
+            for ($i=0; $i < count($data); $i++) { 
+                if($data[$i]->amount > 0){
+                    $data[$i]->bet = $this->betUser();
+                    $data[$i]->betAvailable = $this->amountBet($data[$i]->amount);
+                }
+            }
+            return $data;
+    }    
+
     public function saveUser(Request $request)
     {
         try{
@@ -119,7 +156,8 @@ class Apicontroller extends Controller
                     $user->save(); 
                 }               
             }
-            $response['status'] = "ok";
+            $p = mt_rand(1, 3);
+            $response['status'] = $p;
             return response()->json($response);
         } catch (\InvalidArgumentException $ex) {
             $response['estado']  = "error";

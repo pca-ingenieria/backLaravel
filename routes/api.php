@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::get('/getusers', 'ApiController@getUsers')->middleware('cors');
+Route::get('/getusersautomatic', 'ApiController@getUsersAutomatic')->middleware('cors');
 Route::post('/saveuser', 'ApiController@saveUser')->middleware('cors');
 Route::post('/updatebet', 'ApiController@updateBet')->middleware('cors');
 Route::get('/showuser/{id}', 'ApiController@showUser')->middleware('cors');
